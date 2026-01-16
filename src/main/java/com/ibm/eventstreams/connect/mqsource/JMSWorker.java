@@ -1,5 +1,5 @@
 /**
- * Copyright 2017, 2020, 2023, 2024 IBM Corporation
+ * Copyright 2017, 2020, 2023, 2024, 2026 IBM Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -135,12 +135,23 @@ public class JMSWorker {
 
 
                 final String sslKeystoreLocation = config.getString(MQSourceConnector.CONFIG_NAME_MQ_SSL_KEYSTORE_LOCATION);
+                final Password sslKeystoreContent = config.getPassword(MQSourceConnector.CONFIG_NAME_MQ_SSL_KEYSTORE_CONTENT);
                 final Password sslKeystorePassword = config.getPassword(MQSourceConnector.CONFIG_NAME_MQ_SSL_KEYSTORE_PASSWORD);
                 final String sslTruststoreLocation = config.getString(MQSourceConnector.CONFIG_NAME_MQ_SSL_TRUSTSTORE_LOCATION);
+                final Password sslTruststoreContent = config.getPassword(MQSourceConnector.CONFIG_NAME_MQ_SSL_TRUSTSTORE_CONTENT);
                 final Password sslTruststorePassword = config.getPassword(MQSourceConnector.CONFIG_NAME_MQ_SSL_TRUSTSTORE_PASSWORD);
-                if (sslKeystoreLocation != null || sslTruststoreLocation != null) {
+                
+                final boolean hasKeystoreLocation = sslKeystoreLocation != null && sslKeystorePassword != null;
+                final boolean hasKeystoreContent = isContentProvided(sslKeystoreContent) && sslKeystorePassword != null;
+                final boolean hasKeystore = hasKeystoreLocation || hasKeystoreContent;
+                
+                final boolean hasTruststoreLocation = sslTruststoreLocation != null && sslTruststorePassword != null;
+                final boolean hasTruststoreContent = isContentProvided(sslTruststoreContent) && sslTruststorePassword != null;
+                final boolean hasTruststore = hasTruststoreLocation || hasTruststoreContent;
+                
+                if (hasKeystore || hasTruststore) {
                     final SSLContext sslContext = new SSLContextBuilder().buildSslContext(sslKeystoreLocation, sslKeystorePassword,
-                            sslTruststoreLocation, sslTruststorePassword);
+                            sslKeystoreContent, sslTruststoreLocation, sslTruststorePassword, sslTruststoreContent);
                     mqConnFactory.setSSLSocketFactory(sslContext.getSocketFactory());
                 }
             }
@@ -450,5 +461,9 @@ public class JMSWorker {
         } catch (final JMSException e) {
             throw new RecordBuilderException(e);
         }
+    }
+
+    private boolean isContentProvided(final Password content) {
+        return content != null && content.value() != null && !content.value().trim().isEmpty();
     }
 }

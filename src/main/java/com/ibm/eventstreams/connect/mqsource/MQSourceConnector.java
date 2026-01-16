@@ -1,5 +1,5 @@
 /**
- * Copyright 2017, 2020, 2023, 2024 IBM Corporation
+ * Copyright 2017, 2020, 2023, 2024, 2026 IBM Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -129,6 +129,10 @@ public class MQSourceConnector extends SourceConnector {
     public static final String CONFIG_DOCUMENTATION_MQ_SSL_KEYSTORE_PASSWORD = "The password of the JKS keystore to use for the TLS (SSL) connection.";
     public static final String CONFIG_DISPLAY_MQ_SSL_KEYSTORE_PASSWORD = "SSL keystore password";
 
+    public static final String CONFIG_NAME_MQ_SSL_KEYSTORE_CONTENT = "mq.ssl.keystore.content";
+    public static final String CONFIG_DOCUMENTATION_MQ_SSL_KEYSTORE_CONTENT = "Base64-encoded contents of the JKS keystore to use for the TLS (SSL) connection. If provided, this takes precedence over mq.ssl.keystore.location.";
+    public static final String CONFIG_DISPLAY_MQ_SSL_KEYSTORE_CONTENT = "SSL keystore content (base64)";
+
     public static final String CONFIG_NAME_MQ_SSL_TRUSTSTORE_LOCATION = "mq.ssl.truststore.location";
     public static final String CONFIG_DOCUMENTATION_MQ_SSL_TRUSTSTORE_LOCATION = "The path to the JKS truststore to use for the TLS (SSL) connection.";
     public static final String CONFIG_DISPLAY_MQ_SSL_TRUSTSTORE_LOCATION = "SSL truststore location";
@@ -136,6 +140,10 @@ public class MQSourceConnector extends SourceConnector {
     public static final String CONFIG_NAME_MQ_SSL_TRUSTSTORE_PASSWORD = "mq.ssl.truststore.password";
     public static final String CONFIG_DOCUMENTATION_MQ_SSL_TRUSTSTORE_PASSWORD = "The password of the JKS truststore to use for the TLS (SSL) connection.";
     public static final String CONFIG_DISPLAY_MQ_SSL_TRUSTSTORE_PASSWORD = "SSL truststore password";
+
+    public static final String CONFIG_NAME_MQ_SSL_TRUSTSTORE_CONTENT = "mq.ssl.truststore.content";
+    public static final String CONFIG_DOCUMENTATION_MQ_SSL_TRUSTSTORE_CONTENT = "Base64-encoded contents of the JKS truststore to use for the TLS (SSL) connection. If provided, this takes precedence over mq.ssl.truststore.location.";
+    public static final String CONFIG_DISPLAY_MQ_SSL_TRUSTSTORE_CONTENT = "SSL truststore content (base64)";
 
     public static final String CONFIG_NAME_MQ_SSL_USE_IBM_CIPHER_MAPPINGS = "mq.ssl.use.ibm.cipher.mappings";
     public static final String CONFIG_DOCUMENTATION_MQ_SSL_USE_IBM_CIPHER_MAPPINGS = "Whether to set system property to control use of IBM cipher mappings.";
@@ -532,13 +540,22 @@ public class MQSourceConnector extends SourceConnector {
                 CONFIG_GROUP_MQ, 15, Width.MEDIUM,
                 CONFIG_DISPLAY_MQ_SSL_KEYSTORE_PASSWORD);
 
+        CONFIGDEF.define(CONFIG_NAME_MQ_SSL_KEYSTORE_CONTENT,
+                Type.PASSWORD,
+                // optional - base64-encoded keystore content
+                null,
+                Importance.MEDIUM,
+                CONFIG_DOCUMENTATION_MQ_SSL_KEYSTORE_CONTENT,
+                CONFIG_GROUP_MQ, 16, Width.MEDIUM,
+                CONFIG_DISPLAY_MQ_SSL_KEYSTORE_CONTENT);
+
         CONFIGDEF.define(CONFIG_NAME_MQ_SSL_TRUSTSTORE_LOCATION,
                 Type.STRING,
                 // optional - if provided should be the location of a readable file
                 null, new ReadableFile(),
                 Importance.MEDIUM,
                 CONFIG_DOCUMENTATION_MQ_SSL_TRUSTSTORE_LOCATION,
-                CONFIG_GROUP_MQ, 16, Width.MEDIUM,
+                CONFIG_GROUP_MQ, 17, Width.MEDIUM,
                 CONFIG_DISPLAY_MQ_SSL_TRUSTSTORE_LOCATION);
 
         CONFIGDEF.define(CONFIG_NAME_MQ_SSL_TRUSTSTORE_PASSWORD,
@@ -546,8 +563,17 @@ public class MQSourceConnector extends SourceConnector {
                 // optional - not needed if SSL truststore isn't provided
                 null, Importance.MEDIUM,
                 CONFIG_DOCUMENTATION_MQ_SSL_TRUSTSTORE_PASSWORD,
-                CONFIG_GROUP_MQ, 17, Width.MEDIUM,
+                CONFIG_GROUP_MQ, 18, Width.MEDIUM,
                 CONFIG_DISPLAY_MQ_SSL_TRUSTSTORE_PASSWORD);
+
+        CONFIGDEF.define(CONFIG_NAME_MQ_SSL_TRUSTSTORE_CONTENT,
+                Type.PASSWORD,
+                // optional - base64-encoded truststore content
+                null,
+                Importance.MEDIUM,
+                CONFIG_DOCUMENTATION_MQ_SSL_TRUSTSTORE_CONTENT,
+                CONFIG_GROUP_MQ, 19, Width.MEDIUM,
+                CONFIG_DISPLAY_MQ_SSL_TRUSTSTORE_CONTENT);
 
         CONFIGDEF.define(CONFIG_NAME_MQ_BATCH_SIZE,
                 Type.INT,
